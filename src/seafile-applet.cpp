@@ -410,7 +410,7 @@ void SeafileApplet::onDaemonStarted()
     SeafileExtensionHandler::instance()->start();
 
 #ifdef HAVE_SPARKLE_SUPPORT
-    if (AutoUpdateService::instance()->shouldSupportAutoUpdate()) {
+    if (settings_mgr_->isCheckLatestVersionEnabled()) {
         AutoUpdateService::instance()->setRequestParams();
         AutoUpdateService::instance()->start();
     }
