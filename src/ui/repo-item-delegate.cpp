@@ -36,12 +36,18 @@ const int kPadding = 5;
 
 const int kRepoIconHeight = 36;
 const int kRepoIconWidth = 36;
+const int kRepoIconHeightAlpha = 24;
+const int kRepoIconWidthAlpha = 24;
 const int kRepoNameWidth = 175;
 const int kRepoNameHeight = 30;
+const int kRepoNameHeightAlpha = 20;
+const int kRepoDescriptionHeightAlpha = 14;
 const int kRepoStatusIconWidth = 24;
 const int kRepoStatusIconHeight = 24;
+const int kRepoStatusIconWidthAlpha = 16;
+const int kRepoStatusIconHeightAlpha = 16;
 
-const char *kRepoCategoryIndicatorColor = "#AAA";
+const char *kRepoCategoryIndicatorColor = "#BBB";
 const int kRepoCategoryNameMaxWidth = 400;
 const int kRepoCategoryIndicatorWidth = 16;
 const int kRepoCategoryIndicatorHeight = 16;
@@ -50,28 +56,30 @@ const int kMarginBetweenIndicatorAndName = 5;
 const int kMarginBetweenRepoIconAndName = 10;
 const int kMarginBetweenRepoNameAndStatus = 20;
 
-const char *kRepoNameColor = "#3F3F3F";
+const char *kRepoNameColor = "#141414";
 const char *kRepoNameColorHighlighted = "#544D49";
-const char *kTimestampColor = "#959595";
+const char *kTimestampColor = "#AAAAAA";
 const char *kTimestampColorHighlighted = "#9D9B9A";
 const int kRepoNameFontSize = 14;
 const int kTimestampFontSize = 12;
+const int kRepoDescriptionFontSizeAlpha = 10;
 const int kRepoCategoryNameFontSize = 14;
 const int kRepoCategoryCountFontSize = 12;
+const int kRepoCategoryCountFontSizeAlpha = 14;
 const int kOwnerFontSize = 12;
 
 const char *kRepoItemBackgroundColorHighlighted = "#F9E0C7";
 const char *kRepoItemBackgroundColor = "white";
 const char *kRepoItemBackgroundColorDragMove = "#C8C8C8";
 
-const char *kRepoCategoryColor = "#3F3F3F";
+const char *kRepoCategoryColor = "#747474";
 //const char *kRepoCategoryColorHighlighted = "#FAF5FB";
 
 const char *kRepoCategoryBackgroundColor = "white";
 //const char *kRepoCategoryBackgroundColorHighlighted = "#EF7544";
 
 const int kRepoCategoryCountMarginRight = 10;
-const char *kRepoCategoryCountColor = "#BBB";
+const char *kRepoCategoryCountColor = "#AAAAAA";
 
 static void showTooltip(const QString &text,
                         QWidget *viewport,
@@ -111,12 +119,13 @@ QSize RepoItemDelegate::sizeHintForRepoItem(const QStyleOptionViewItem &option,
                                             const RepoItem *item) const
 {
 
-    int width = kMarginLeft + kRepoIconWidth
+    int width = kMarginLeft + kRepoIconWidthAlpha
         + kMarginBetweenRepoIconAndName + kRepoNameWidth
-        + kMarginBetweenRepoNameAndStatus + kRepoStatusIconWidth
+        + kMarginBetweenRepoNameAndStatus + kRepoStatusIconWidthAlpha
         + kMarginRight + kPadding * 2;
 
-    int height = kRepoIconHeight + kPadding * 2 + kMarginTop + kMarginBottom;
+    // int height = kRepoIconHeightAlpha + kPadding * 2 + kMarginTop + kMarginBottom;
+    int height = kRepoIconHeightAlpha + 13 * 2;
 
     // qDebug("width = %d, height = %d\n", width, height);
 
@@ -199,7 +208,8 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     }
 
     // Paint repo icon
-    QPoint repo_icon_pos(kMarginLeft + kPadding + indent_left, kMarginTop + kPadding);
+    // QPoint repo_icon_pos(kMarginLeft + kPadding + indent_left, kMarginTop + kPadding);
+    QPoint repo_icon_pos(20, 13);
     repo_icon_pos += option.rect.topLeft();
     painter->save();
 
@@ -208,23 +218,24 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     scale_factor = globalDevicePixelRatio();
 #endif // QT5
-    QPixmap repo_icon(repo.getIcon().pixmap(QSize(kRepoIconWidth, kRepoIconHeight) * scale_factor));
+    QPixmap repo_icon(repo.getIcon().pixmap(QSize(kRepoIconWidthAlpha, kRepoIconHeightAlpha) * scale_factor));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     repo_icon.setDevicePixelRatio(scale_factor);
 #endif // QT5
 
-    QRect repo_icon_rect(repo_icon_pos, QSize(kRepoIconWidth, kRepoIconHeight));
+    QRect repo_icon_rect(repo_icon_pos, QSize(kRepoIconWidthAlpha, kRepoIconHeightAlpha));
     painter->drawPixmap(repo_icon_rect, repo_icon);
     painter->restore();
 
     // Paint repo name
     painter->save();
-    QPoint repo_name_pos = repo_icon_pos + QPoint(kRepoIconWidth + kMarginBetweenRepoIconAndName, 0);
-    int repo_name_width = option.rect.width() - kRepoIconWidth - kMarginBetweenRepoIconAndName
-        - kRepoStatusIconWidth  - kMarginBetweenRepoNameAndStatus
+    // QPoint repo_name_pos = repo_icon_pos + QPoint(kRepoIconWidthAlpha + kMarginBetweenRepoIconAndName, 0);
+    QPoint repo_name_pos = repo_icon_pos + QPoint(kRepoIconWidthAlpha + kMarginBetweenRepoIconAndName, -5);
+    int repo_name_width = option.rect.width() - kRepoIconWidthAlpha - kMarginBetweenRepoIconAndName
+        - kRepoStatusIconWidthAlpha - kMarginBetweenRepoNameAndStatus
         - kPadding * 2 - kMarginLeft - kMarginRight;
     repo_name_width -= indent_left;
-    QRect repo_name_rect(repo_name_pos, QSize(repo_name_width, kRepoNameHeight));
+    QRect repo_name_rect(repo_name_pos, QSize(repo_name_width, kRepoNameHeightAlpha));
     painter->setPen(QColor(selected ? kRepoNameColorHighlighted : kRepoNameColor));
     painter->setFont(changeFontSize(painter->font(), kRepoNameFontSize));
     painter->drawText(repo_name_rect,
@@ -236,8 +247,8 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     // Paint repo description
     painter->save();
     QPoint repo_desc_pos = repo_name_rect.bottomLeft() + QPoint(0, 5);
-    QRect repo_desc_rect(repo_desc_pos, QSize(repo_name_width, kRepoNameHeight));
-    painter->setFont(changeFontSize(painter->font(), kTimestampFontSize));
+    QRect repo_desc_rect(repo_desc_pos, QSize(repo_name_width, kRepoDescriptionHeightAlpha));
+    painter->setFont(changeFontSize(painter->font(), kRepoDescriptionFontSizeAlpha));
     painter->setPen(QColor(selected ? kTimestampColorHighlighted : kTimestampColor));
 
     QString description;
@@ -305,9 +316,9 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     }
 
     // Paint repo status icon
-    QPoint status_icon_pos = option.rect.topRight() - QPoint(40, 0);
-    status_icon_pos.setY(option.rect.center().y() - (kRepoStatusIconHeight / 2));
-    QRect status_icon_rect(status_icon_pos, QSize(kRepoStatusIconWidth, kRepoStatusIconHeight));
+    QPoint status_icon_pos = option.rect.topRight() - QPoint(41, 0);
+    status_icon_pos.setY(option.rect.center().y() - (kRepoStatusIconHeightAlpha / 2));
+    QRect status_icon_rect(status_icon_pos, QSize(kRepoStatusIconWidthAlpha, kRepoStatusIconHeightAlpha));
 
     QPixmap status_icon_pixmap = getSyncStatusIcon(item).pixmap(scale_factor * status_icon_rect.size());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
@@ -356,14 +367,15 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
         indent_left = kRepoCategoryIndicatorWidth + kMarginBetweenIndicatorAndName;
     }
 
-    QRect indicator_rect(option.rect.topLeft() + QPoint(kMarginLeft + indent_left, 0),
+    QRect indicator_rect(option.rect.topLeft() + QPoint(kMarginLeft + indent_left, 3),
                          QSize(kRepoCategoryIndicatorWidth, kRepoCategoryIndicatorHeight));
     // get the device pixel radio from current painter device
     double scale_factor = 1;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     scale_factor = globalDevicePixelRatio();
 #endif // QT5
-    QIcon icon(expanded? awesome->icon(icon_caret_down, kRepoCategoryIndicatorColor) : awesome->icon(icon_caret_right, kRepoCategoryIndicatorColor));
+    QIcon icon(expanded ? awesome->icon(icon_caret_down, kRepoCategoryIndicatorColor)
+                        : awesome->icon(icon_caret_right, kRepoCategoryIndicatorColor));
     QPixmap icon_pixmap(icon.pixmap(QSize(kRepoCategoryIndicatorWidth, kRepoCategoryIndicatorWidth) * scale_factor));
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     icon_pixmap.setDevicePixelRatio(scale_factor);
@@ -391,10 +403,10 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
         }
     }
     const QString category_count_text = QString::number(synced_repos) + "/" + QString::number(item->matchedReposCount());
-    const int category_count_width = ::textWidthInFont(category_count_text, changeFontSize(option.font, kRepoCategoryCountFontSize));
+    const int category_count_width = ::textWidthInFont(category_count_text, changeFontSize(option.font, kRepoCategoryCountFontSizeAlpha));
 
     painter->save();
-    QPoint category_name_pos = indicator_rect.topRight() + QPoint(kMarginBetweenIndicatorAndName, 0);
+    QPoint category_name_pos = indicator_rect.topRight() + QPoint(kMarginBetweenIndicatorAndName, -3);
     QRect category_name_rect(category_name_pos,
                              option.rect.bottomRight() - QPoint(kPadding + category_count_width + kRepoCategoryCountMarginRight, 0));
     painter->setPen(QColor(kRepoCategoryColor));
@@ -406,9 +418,9 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
 
     // Paint category count
     painter->save();
-    QPoint category_count_pos = option.rect.topRight() + QPoint(-category_count_width - kPadding - kRepoCategoryCountMarginRight, 0);
+    QPoint category_count_pos = option.rect.topRight() + QPoint(-category_count_width - 20, 0);
     QRect category_count_rect(category_count_pos, option.rect.bottomRight() - QPoint(kPadding + kRepoCategoryCountMarginRight, 0));
-    painter->setFont(changeFontSize(option.font, kRepoCategoryCountFontSize));
+    painter->setFont(changeFontSize(option.font, kRepoCategoryCountFontSizeAlpha));
     painter->setPen(QColor(kRepoCategoryCountColor));
     painter->drawText(category_count_rect,
                       Qt::AlignLeft | Qt::AlignTop,
@@ -422,16 +434,16 @@ QIcon RepoItemDelegate::getSyncStatusIcon(const RepoItem *item) const
     const LocalRepo& repo = item->localRepo();
     QString icon;
     if (!repo.isValid()) {
-        icon = "cloud";
+        icon = "cloudUnsynced-alpha";
     } else if (!seafApplet->settingsManager()->autoSync()) {
         icon = "pause";
     } else {
         switch (repo.sync_state) {
         case LocalRepo::SYNC_STATE_DONE:
-            icon = "done";
+            icon = "cloudSynced-alpha";
             break;
         case LocalRepo::SYNC_STATE_ING:
-            icon = "rotate";
+            icon = "cloudSync-alpha";
             break;
         case LocalRepo::SYNC_STATE_ERROR:
             icon = "exclamation";
