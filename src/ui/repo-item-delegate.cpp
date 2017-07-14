@@ -28,11 +28,13 @@ namespace {
             subtitle
  */
 
-const int kMarginLeft = 5;
+const int kMarginLeft = 16;
 const int kMarginRight = 5;
 const int kMarginTop = 5;
 const int kMarginBottom = 5;
 const int kPadding = 5;
+const int kRepoItemVerticalMargin = 13;
+const int kRepoCategoryVerticalMargin = 10;
 
 const int kRepoIconHeight = 36;
 const int kRepoIconWidth = 36;
@@ -67,18 +69,23 @@ const int kRepoCategoryNameFontSize = 14;
 const int kRepoCategoryCountFontSize = 12;
 const int kRepoCategoryCountFontSizeAlpha = 14;
 const int kOwnerFontSize = 12;
+const int kOwnerFontSizeAlpha = 10;
 
 const char *kRepoItemBackgroundColorHighlighted = "#F9E0C7";
+const char *kRepoItemBackgroundColorHighlightedAlpha = "#EFEEEE";
 const char *kRepoItemBackgroundColor = "white";
+const char *kRepoItemBackgroundColorAlpha = "#F9F9F9";
 const char *kRepoItemBackgroundColorDragMove = "#C8C8C8";
 
 const char *kRepoCategoryColor = "#747474";
 //const char *kRepoCategoryColorHighlighted = "#FAF5FB";
 
 const char *kRepoCategoryBackgroundColor = "white";
+const char *kRepoCategoryBackgroundColorAlpha = "#F9F9F9";
 //const char *kRepoCategoryBackgroundColorHighlighted = "#EF7544";
 
 const int kRepoCategoryCountMarginRight = 10;
+const int kRepoCategoryCountMarginRightAlpha = 20;
 const char *kRepoCategoryCountColor = "#AAAAAA";
 
 static void showTooltip(const QString &text,
@@ -125,7 +132,7 @@ QSize RepoItemDelegate::sizeHintForRepoItem(const QStyleOptionViewItem &option,
         + kMarginRight + kPadding * 2;
 
     // int height = kRepoIconHeightAlpha + kPadding * 2 + kMarginTop + kMarginBottom;
-    int height = kRepoIconHeightAlpha + 13 * 2;
+    int height = kRepoIconHeightAlpha + kRepoItemVerticalMargin * 2;
 
     // qDebug("width = %d, height = %d\n", width, height);
 
@@ -137,13 +144,14 @@ QSize RepoItemDelegate::sizeHintForRepoCategoryItem(const QStyleOptionViewItem &
 {
     int width, height;
 
-	QFontMetrics qfm(option.font);
+    QFontMetrics qfm(changeFontSize(option.font, kRepoCategoryNameFontSize));
     QSize size = qfm.size(0, item->name());
 
     width = qMin(size.width(), kRepoCategoryIndicatorWidth)
         + kMarginBetweenIndicatorAndName + kRepoCategoryNameMaxWidth;
 
-    height = qMax(size.height(), kRepoCategoryIndicatorHeight) + kPadding;
+    // height = qMax(size.height(), kRepoCategoryIndicatorHeight) + kPadding;
+    height = qMax(size.height(), kRepoCategoryIndicatorHeight) + kRepoCategoryVerticalMargin * 2;
 
     // qDebug("width = %d, height = %d\n", width, height);
 
@@ -171,9 +179,7 @@ void RepoItemDelegate::paint(QPainter *painter,
     RepoTreeView *view = static_cast<RepoTreeView*>(parent());
     if (view->indexAt(QPoint(0, 0)).parent().isValid()) {
         if (option.rect.contains(QPoint(0, 0))) {
-            QStyleOptionViewItem category_option = option;
-            category_option.rect = QRect(0, 0, option.rect.width(), kRepoCategoryIndicatorHeight + kPadding * 2);
-            paintRepoCategoryItem(painter, category_option, (RepoCategoryItem *)getItem(view->indexAt(QPoint(0, 0)).parent()));
+            paintRepoCategoryItem(painter, option, (RepoCategoryItem *)getItem(view->indexAt(QPoint(0, 0)).parent()));
         }
     }
 }
@@ -190,7 +196,7 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     RepoTreeView *view = model->treeView();
     QModelIndex index = ((QSortFilterProxyModel *)view->model())->mapFromSource(model->indexFromItem(item));
     if (option.state & (QStyle::State_HasFocus | QStyle::State_Selected)) {
-        backBrush = QColor(kRepoItemBackgroundColorHighlighted);
+        backBrush = QColor(kRepoItemBackgroundColorHighlightedAlpha);
         selected = true;
     } else if (view->getCurrentDropTarget() == index) {
         backBrush = QColor(kRepoItemBackgroundColorDragMove);
@@ -209,7 +215,7 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
 
     // Paint repo icon
     // QPoint repo_icon_pos(kMarginLeft + kPadding + indent_left, kMarginTop + kPadding);
-    QPoint repo_icon_pos(20, 13);
+    QPoint repo_icon_pos(kMarginLeft, kRepoItemVerticalMargin);
     repo_icon_pos += option.rect.topLeft();
     painter->save();
 
@@ -235,7 +241,8 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
         - kRepoStatusIconWidthAlpha - kMarginBetweenRepoNameAndStatus
         - kPadding * 2 - kMarginLeft - kMarginRight;
     repo_name_width -= indent_left;
-    QRect repo_name_rect(repo_name_pos, QSize(repo_name_width, kRepoNameHeightAlpha));
+    int repo_name_height = ::textHeightInFont(repo.name, changeFontSize(painter->font(), kRepoNameFontSize));
+    QRect repo_name_rect(repo_name_pos, QSize(repo_name_width, repo_name_height));
     painter->setPen(QColor(selected ? kRepoNameColorHighlighted : kRepoNameColor));
     painter->setFont(changeFontSize(painter->font(), kRepoNameFontSize));
     painter->drawText(repo_name_rect,
@@ -245,12 +252,6 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     painter->restore();
 
     // Paint repo description
-    painter->save();
-    QPoint repo_desc_pos = repo_name_rect.bottomLeft() + QPoint(0, 5);
-    QRect repo_desc_rect(repo_desc_pos, QSize(repo_name_width, kRepoDescriptionHeightAlpha));
-    painter->setFont(changeFontSize(painter->font(), kRepoDescriptionFontSizeAlpha));
-    painter->setPen(QColor(selected ? kTimestampColorHighlighted : kTimestampColor));
-
     QString description;
     const LocalRepo& r = item->localRepo();
     if (r.isValid()) {
@@ -279,7 +280,12 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     if (description.isEmpty()) {
         description = translateCommitTime(repo.mtime);
     }
-
+    painter->save();
+    QPoint repo_desc_pos = repo_name_rect.bottomLeft() + QPoint(0, 5);
+    int repo_desc_height = ::textHeightInFont(description, changeFontSize(painter->font(), kRepoDescriptionFontSizeAlpha));
+    QRect repo_desc_rect(repo_desc_pos, QSize(repo_name_width, repo_desc_height));
+    painter->setFont(changeFontSize(painter->font(), kRepoDescriptionFontSizeAlpha));
+    painter->setPen(QColor(selected ? kTimestampColorHighlighted : kTimestampColor));
     painter->drawText(repo_desc_rect,
                       Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
                       fitTextToWidth(description, painter->font(), repo_name_width),
@@ -304,8 +310,9 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
         if (width < 3)
           width = 3;
         QPoint repo_owner_pos = repo_desc_rect.topRight();
-        QRect repo_owner_rect(repo_owner_pos, QSize(width, kRepoNameHeight));
-        painter->setFont(changeFontSize(painter->font(), kOwnerFontSize));
+        int extra_desc_height = ::textHeightInFont(extra_description, changeFontSize(painter->font(), kOwnerFontSizeAlpha));
+        QRect repo_owner_rect(repo_owner_pos, QSize(width, extra_desc_height));
+        painter->setFont(changeFontSize(painter->font(), kOwnerFontSizeAlpha));
         painter->setPen(QColor(selected ? kTimestampColorHighlighted : kTimestampColor));
         painter->drawText(repo_owner_rect,
                           Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap,
@@ -367,7 +374,12 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
         indent_left = kRepoCategoryIndicatorWidth + kMarginBetweenIndicatorAndName;
     }
 
-    QRect indicator_rect(option.rect.topLeft() + QPoint(kMarginLeft + indent_left, 3),
+    int repo_category_text_height = ::textHeightInFont(item->name(), changeFontSize(option.font, kRepoCategoryNameFontSize));
+    int vertical_padding_between_indicator_and_name = (repo_category_text_height - kRepoCategoryIndicatorHeight) / 2;
+
+    QRect indicator_rect(option.rect.topLeft() +
+                         QPoint(kMarginLeft + indent_left,
+                                kRepoCategoryVerticalMargin + vertical_padding_between_indicator_and_name),
                          QSize(kRepoCategoryIndicatorWidth, kRepoCategoryIndicatorHeight));
     // get the device pixel radio from current painter device
     double scale_factor = 1;
@@ -406,9 +418,11 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
     const int category_count_width = ::textWidthInFont(category_count_text, changeFontSize(option.font, kRepoCategoryCountFontSizeAlpha));
 
     painter->save();
-    QPoint category_name_pos = indicator_rect.topRight() + QPoint(kMarginBetweenIndicatorAndName, -3);
+    QPoint category_name_pos = indicator_rect.topRight() +
+                               QPoint(kMarginBetweenIndicatorAndName, - vertical_padding_between_indicator_and_name);
     QRect category_name_rect(category_name_pos,
-                             option.rect.bottomRight() - QPoint(kPadding + category_count_width + kRepoCategoryCountMarginRight, 0));
+                             option.rect.bottomRight() - QPoint(kPadding + category_count_width + kRepoCategoryCountMarginRightAlpha,
+                                                                kRepoCategoryVerticalMargin));
     painter->setPen(QColor(kRepoCategoryColor));
     painter->setFont(changeFontSize(option.font, kRepoCategoryNameFontSize));
     painter->drawText(category_name_rect,
@@ -418,8 +432,11 @@ void RepoItemDelegate::paintRepoCategoryItem(QPainter *painter,
 
     // Paint category count
     painter->save();
-    QPoint category_count_pos = option.rect.topRight() + QPoint(-category_count_width - 20, 0);
-    QRect category_count_rect(category_count_pos, option.rect.bottomRight() - QPoint(kPadding + kRepoCategoryCountMarginRight, 0));
+    QPoint category_count_pos = option.rect.topRight() +
+                                QPoint(-category_count_width - kRepoCategoryCountMarginRightAlpha, 0);
+    category_count_pos.setY(category_name_pos.y());
+    QRect category_count_rect(category_count_pos,
+                              option.rect.bottomRight() - QPoint(kRepoCategoryCountMarginRightAlpha, kRepoCategoryVerticalMargin));
     painter->setFont(changeFontSize(option.font, kRepoCategoryCountFontSizeAlpha));
     painter->setPen(QColor(kRepoCategoryCountColor));
     painter->drawText(category_count_rect,

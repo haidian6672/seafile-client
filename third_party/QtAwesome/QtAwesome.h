@@ -418,9 +418,9 @@ enum QtFontAwesomeName {
     icon_bug                    = 0xf188,
     icon_vk                     = 0xf189,
     icon_weibo                  = 0xf18a,
-    icon_renren                 = 0xf18b
+    icon_renren                 = 0xf18b,
 
-
+    icon_circle_close           = 0xf057
 };
 
 

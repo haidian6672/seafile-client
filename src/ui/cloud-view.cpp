@@ -228,17 +228,22 @@ void CloudView::setupFooter()
 
     // mDownloadRateArrow->setText(QChar(icon_arrow_down));
     // mDownloadRateArrow->setFont(awesome->font(16));
-    mDownloadRateArrow->setPixmap(QPixmap(":/images/main-panel/down.png"));
+    mDownloadRateArrow->setPixmap(QPixmap(":/images/main-panel/download-alpha.png"));
+    mDownloadRateArrow->setAlignment(Qt::AlignVCenter);
     mDownloadRate->setText("0 kB/s");
     mDownloadRate->setToolTip(tr("current download rate"));
+    mDownloadRate->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
     // mUploadRateArrow->setText(QChar(icon_arrow_up));
     // mUploadRateArrow->setFont(awesome->font(16));
-    mUploadRateArrow->setPixmap(QPixmap(":/images/main-panel/up.png"));
+    mUploadRateArrow->setPixmap(QPixmap(":/images/main-panel/upload-alpha.png"));
+    mUploadRateArrow->setAlignment(Qt::AlignVCenter);
     mUploadRate->setText("0 kB/s");
     mUploadRate->setToolTip(tr("current upload rate"));
+    mUploadRate->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
 
     mStorageUsage->reset();
+    mStorageUsage->setAlignment(Qt::AlignVCenter);
 }
 
 void CloudView::chooseFolderToSync()
