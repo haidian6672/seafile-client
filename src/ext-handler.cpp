@@ -216,7 +216,8 @@ void SeafileExtensionHandler::getShareLink(const SharedLinkRequestParams& params
 void SeafileExtensionHandler::onGetShareLinkSuccess(const SharedLinkInfo& shared_link_info)
 {
     bool proceed = false;
-    proceed = seafApplet->detailedYesOrNoBox(tr("<b>Warning:</b> The shared link already exists, delete and create link anyway?"),
+    proceed = seafApplet->detailedYesOrNoBox(tr("<b>Warning:</b> The shared link already exists, "
+                                      "delete and create link anyway?"),
                                       "username: " + shared_link_info.username +
 				      "\nlink: " + shared_link_info.link +
 				      "\nview_cnt: " + QString::number(shared_link_info.view_cnt),
@@ -230,9 +231,15 @@ void SeafileExtensionHandler::onGetShareLinkSuccess(const SharedLinkInfo& shared
 
         connect(req, SIGNAL(success()),
                 this, SLOT(generateShareLink()));
-
+        connect(req, SIGNAL(failed()),
+                this, SLOT(onDeleteSharedLinkFailed()));
         req->send();
     }
+}
+
+void SeafileExtensionHandler::onDeleteSharedLinkFailed()
+{
+    seafApplet->warningBox(tr("Failed to delete the shared link"));
 }
 
 void SeafileExtensionHandler::generateShareLink()

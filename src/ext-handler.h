@@ -42,6 +42,7 @@ private slots:
     void getShareLink(const SharedLinkRequestParams& params);
     void onGetShareLinkSuccess(const SharedLinkInfo& shared_link_info);
     void generateShareLink();
+    void onDeleteSharedLinkFailed();
     void onGenerateShareLinkSuccess(const SharedLinkInfo& shared_link_info);
     void onLockFileSuccess();
     void onLockFileFailed(const ApiError& error);
