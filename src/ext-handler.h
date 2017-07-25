@@ -25,13 +25,6 @@ struct SharedLinkRequestParams {
     bool is_file;
     bool internal;
     bool advanced;
-    void initialize() {
-        repo_id.clear();
-        path_in_repo.clear();
-        is_file = false;
-        internal = false;
-        advanced = false;
-    }
 };
 
 /**
@@ -46,7 +39,7 @@ public:
     void stop();
 
 private slots:
-    void getShareLink();
+    void getShareLink(const SharedLinkRequestParams& params);
     void onGetShareLinkSuccess(const SharedLinkInfo& shared_link_info);
     void generateShareLink();
     void onGenerateShareLinkSuccess(const SharedLinkInfo& shared_link_info);
@@ -79,7 +72,7 @@ public:
     void run();
 
 signals:
-    void getShareLink();
+    void getShareLink(const SharedLinkRequestParams& params);
     void lockFile(const QString& repo_id,
                   const QString& path_in_repo,
                   bool lock);
@@ -104,7 +97,7 @@ public:
     void run();
 
 signals:
-    void getShareLink();
+    void getShareLink(const SharedLinkRequestParams& params);
     void lockFile(const QString& repo_id,
                   const QString& path_in_repo,
                   bool lock);

@@ -116,14 +116,11 @@ void GetSharedLinkRequest::requestSuccess(QNetworkReply& reply)
     if (!root) {
         qWarning("GetSharedLinkRequest: failed to parse json:%s\n",
                  error.text);
-        emit SeafileApiRequest::failed(ApiError::fromJsonError());
+        emit failed(ApiError::fromJsonError());
         return;
     }
 
     if (json_array_size(root) == 0) {
-        qWarning("GetSharedLinkRequest: failed to get json.\n");
-        emit failed();
-        emit SeafileApiRequest::failed(ApiError::fromJsonError());
         return;
     }
 
@@ -131,7 +128,7 @@ void GetSharedLinkRequest::requestSuccess(QNetworkReply& reply)
     QMap<QString, QVariant> dict = mapFromJSON(json.data(), &error);
 
     if (!dict.contains("link")) {
-        emit SeafileApiRequest::failed(ApiError::fromJsonError());
+        emit failed(ApiError::fromJsonError());
         return;
     }
 

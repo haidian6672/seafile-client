@@ -150,8 +150,8 @@ SeafileExtensionHandler::SeafileExtensionHandler()
 {
     listener_thread_ = new ExtConnectionListenerThread;
 
-    connect(listener_thread_, SIGNAL(getShareLink()),
-            this, SLOT(getShareLink()));
+    connect(listener_thread_, SIGNAL(getShareLink(const SharedLinkRequestParams& params)),
+            this, SLOT(getShareLink(const SharedLinkRequestParams& params)));
 
     connect(listener_thread_, SIGNAL(lockFile(const QString&, const QString&, bool)),
             this, SLOT(lockFile(const QString&, const QString&, bool)));
@@ -179,19 +179,19 @@ void SeafileExtensionHandler::stop()
     }
 }
 
-void SeafileExtensionHandler::getShareLink()
+void SeafileExtensionHandler::getShareLink(const SharedLinkRequestParams& params)
 {
     // qDebug("path_in_repo: %s", path_in_repo.toUtf8().data());
-    const QString repo_id = shared_link_req_params_.repo_id;
-    QString path = shared_link_req_params_.path_in_repo;
+    const QString repo_id = params.repo_id;
+    QString path = params.path_in_repo;
     const Account account =
         seafApplet->accountManager()->getAccountByRepo(repo_id);
     if (!account.isValid()) {
         return;
     }
 
-    if (shared_link_req_params_.internal) {
-        if (!shared_link_req_params_.is_file && !path.endsWith("/")) {
+    if (params.internal) {
+        if (!params.is_file && !path.endsWith("/")) {
             path += "/";
         }
         SeafileLinkDialog *dialog = new SeafileLinkDialog(
@@ -384,8 +384,8 @@ void ExtConnectionListenerThread::servePipeInNewThread(HANDLE pipe)
 {
     ExtCommandsHandler *t = new ExtCommandsHandler(pipe);
 
-    connect(t, SIGNAL(getShareLink()),
-            this, SIGNAL(getShareLink()));
+    connect(t, SIGNAL(getShareLink(const SharedLinkRequestParams& params)),
+            this, SIGNAL(getShareLink(const SharedLinkRequestParams& params)));
     connect(t, SIGNAL(lockFile(const QString&, const QString&, bool)),
             this, SIGNAL(lockFile(const QString&, const QString&, bool)));
     connect(t, SIGNAL(privateShare(const QString&, const QString&, bool)),
@@ -505,14 +505,13 @@ void ExtCommandsHandler::handleGenShareLink(const QStringList& args,
             QString path_in_repo = path.mid(wt.size());
             bool is_file = QFileInfo(path).isFile();
 
-            shared_link_req_params_.initialize();
             shared_link_req_params_.repo_id = repo.id;
             shared_link_req_params_.path_in_repo = path_in_repo;
             shared_link_req_params_.is_file = is_file;
             shared_link_req_params_.internal = internal;
             shared_link_req_params_.advanced = advanced;
 
-            emit getShareLink();
+            emit getShareLink(shared_link_req_params_);
             break;
         }
     }
