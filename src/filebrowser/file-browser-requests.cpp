@@ -97,15 +97,14 @@ void GetFileDownloadLinkRequest::requestSuccess(QNetworkReply& reply)
     emit failed(ApiError::fromHttpError(500));
 }
 
-GetSharedLinkRequest::GetSharedLinkRequest(const Account &account,
-                                           const QString &repo_id,
-                                           const QString &path)
+GetSharedLinkRequest::GetSharedLinkRequest(const SharedLinkRequestParams &params)
     : SeafileApiRequest(
-          account.getAbsoluteUrl(QString(kSharedLinkUrl)),
-          SeafileApiRequest::METHOD_GET, account.token)
+          params.account.getAbsoluteUrl(QString(kSharedLinkUrl)),
+          SeafileApiRequest::METHOD_GET, params.account.token),
+      req_params(params)
 {
-    setUrlParam("repo_id", repo_id);
-    setUrlParam("path", path);
+    setUrlParam("repo_id", req_params.repo_id);
+    setUrlParam("path", req_params.path_in_repo);
 }
 
 void GetSharedLinkRequest::requestSuccess(QNetworkReply& reply)
@@ -121,6 +120,7 @@ void GetSharedLinkRequest::requestSuccess(QNetworkReply& reply)
     }
 
     if (json_array_size(root) == 0) {
+        emit empty();
         return;
     }
 
@@ -148,17 +148,16 @@ void GetSharedLinkRequest::requestSuccess(QNetworkReply& reply)
     emit success(shared_link_info);
 }
 
-CreateShareLinkRequest::CreateShareLinkRequest(const Account &account,
-                                               const QString &repo_id,
-                                               const QString &path,
+CreateShareLinkRequest::CreateShareLinkRequest(const SharedLinkRequestParams &params,
                                                const QString &password,
                                                quint64 expired_date)
     : SeafileApiRequest(
-          account.getAbsoluteUrl(QString(kSharedLinkUrl)),
-          SeafileApiRequest::METHOD_POST, account.token)
+          params.account.getAbsoluteUrl(QString(kSharedLinkUrl)),
+          SeafileApiRequest::METHOD_POST, params.account.token),
+      req_params(params)
 {
-    setFormParam("repo_id", repo_id);
-    setFormParam("path", path);
+    setFormParam("repo_id", req_params.repo_id);
+    setFormParam("path", req_params.path_in_repo);
 
     SetAdvancedShareParams(password, expired_date);
 }
@@ -209,11 +208,12 @@ void CreateShareLinkRequest::requestSuccess(QNetworkReply& reply)
     emit success(shared_link_info);
 }
 
-DeleteSharedLinkRequest::DeleteSharedLinkRequest(const Account &account,
+DeleteSharedLinkRequest::DeleteSharedLinkRequest(const SharedLinkRequestParams &params,
                                                  const QString &token)
     : SeafileApiRequest(
-          account.getAbsoluteUrl((QString(kSharedLinkUrl) + "%1/").arg(token)),
-          SeafileApiRequest::METHOD_DELETE, account.token)
+          params.account.getAbsoluteUrl((QString(kSharedLinkUrl) + "%1/").arg(token)),
+          SeafileApiRequest::METHOD_DELETE, params.account.token),
+      req_params(params)
 {
 }
 
