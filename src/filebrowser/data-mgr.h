@@ -58,10 +58,6 @@ public:
                       const QString &path,
                       bool is_file);
 
-    void shareDirent(const QString &repo_id,
-                     const QString &path,
-                     bool is_file);
-
     void copyDirents(const QString &repo_id,
                      const QString &dir_path,
                      const QStringList &file_names,

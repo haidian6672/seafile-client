@@ -226,6 +226,7 @@ SET(moc_headers
   src/settings-mgr.h
   src/traynotificationwidget.h
   src/traynotificationmanager.h
+  src/shared-link-mgr.h
   src/api/api-client.h
   src/api/api-request.h
   src/api/requests.h
@@ -273,6 +274,7 @@ SET(moc_headers
   src/ui/set-repo-password-dialog.h
   src/ui/sync-errors-dialog.h
   src/ui/search-bar.h
+  src/ui/advanced-sharedlink-dialog.h
   src/filebrowser/file-browser-manager.h
   src/filebrowser/file-browser-dialog.h
   src/filebrowser/file-browser-requests.h
@@ -281,7 +283,6 @@ SET(moc_headers
   src/filebrowser/tasks.h
   src/filebrowser/progress-dialog.h
   src/filebrowser/sharedlink-dialog.h
-  src/filebrowser/advanced-sharedlink-dialog.h
   src/filebrowser/seafilelink-dialog.h
   src/filebrowser/auto-update-mgr.h
   src/filebrowser/transfer-mgr.h
@@ -400,6 +401,7 @@ SET(seafile_client_sources
   src/traynotificationwidget.cpp
   src/traynotificationmanager.cpp
   src/certs-mgr.cpp
+  src/shared-link-mgr.cpp
   src/api/api-client.cpp
   src/api/api-request.cpp
   src/api/api-error.cpp
@@ -460,6 +462,7 @@ SET(seafile_client_sources
   src/ui/set-repo-password-dialog.cpp
   src/ui/sync-errors-dialog.cpp
   src/ui/search-bar.cpp
+  src/ui/advanced-sharedlink-dialog.cpp
   src/filebrowser/file-browser-manager.cpp
   src/filebrowser/file-browser-dialog.cpp
   src/filebrowser/file-browser-requests.cpp
@@ -470,7 +473,6 @@ SET(seafile_client_sources
   src/filebrowser/tasks.cpp
   src/filebrowser/progress-dialog.cpp
   src/filebrowser/sharedlink-dialog.cpp
-  src/filebrowser/advanced-sharedlink-dialog.cpp
   src/filebrowser/seafilelink-dialog.cpp
   src/filebrowser/auto-update-mgr.cpp
   src/filebrowser/transfer-mgr.cpp
