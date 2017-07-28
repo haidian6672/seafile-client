@@ -12,7 +12,6 @@
 #include "utils/singleton.h"
 #include "rpc/local-repo.h"
 #include "account.h"
-#include "filebrowser/file-browser-requests.h"
 
 class SeafileRpcClient;
 class ExtConnectionListenerThread;

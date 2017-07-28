@@ -22,6 +22,7 @@
 #include "rpc/rpc-client.h"
 #include "ui/private-share-dialog.h"
 #include "shared-link-mgr.h"
+#include "api/requests.h"
 
 #include "file-browser-manager.h"
 #include "file-browser-dialog.h"

@@ -30,6 +30,7 @@
 #include "utils/utils.h"
 #include "auto-login-service.h"
 #include "shared-link-mgr.h"
+#include "api/requests.h"
 
 #include "ext-handler.h"
 

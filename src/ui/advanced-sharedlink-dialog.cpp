@@ -4,7 +4,8 @@
 #include <QGridLayout>
 
 #include "utils/utils-mac.h"
-#include "filebrowser/file-browser-requests.h"
+#include "api/requests.h"
+
 #include "seafile-applet.h"
 #include "advanced-sharedlink-dialog.h"
 
