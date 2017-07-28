@@ -1,4 +1,4 @@
-#include "filebrowser/file-browser-requests.h"
+#include "api/requests.h"
 #include "ui/seafilelink-dialog.h"
 #include "ui/sharedlink-dialog.h"
 #include "ui/advanced-sharedlink-dialog.h"
