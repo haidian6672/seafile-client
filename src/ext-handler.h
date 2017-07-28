@@ -12,20 +12,11 @@
 #include "utils/singleton.h"
 #include "rpc/local-repo.h"
 #include "account.h"
+#include "filebrowser/file-browser-requests.h"
 
 class SeafileRpcClient;
 class ExtConnectionListenerThread;
 class ApiError;
-// class CreateShareLinkRequest;
-struct SharedLinkInfo;
-
-struct SharedLinkRequestParams {
-    QString repo_id;
-    QString path_in_repo;
-    bool is_file;
-    bool internal;
-    bool advanced;
-};
 
 /**
  * Handles commands from seafile shell extension
@@ -39,11 +30,7 @@ public:
     void stop();
 
 private slots:
-    void getShareLink(const SharedLinkRequestParams& params);
-    void onGetShareLinkSuccess(const SharedLinkInfo& shared_link_info);
-    void generateShareLink();
-    void onDeleteSharedLinkFailed();
-    void onGenerateShareLinkSuccess(const SharedLinkInfo& shared_link_info);
+    void getShareLink();
     void onLockFileSuccess();
     void onLockFileFailed(const ApiError& error);
     void lockFile(const QString& repo_id,
@@ -73,7 +60,7 @@ public:
     void run();
 
 signals:
-    void getShareLink(const SharedLinkRequestParams& params);
+    void getShareLink();
     void lockFile(const QString& repo_id,
                   const QString& path_in_repo,
                   bool lock);
@@ -98,7 +85,7 @@ public:
     void run();
 
 signals:
-    void getShareLink(const SharedLinkRequestParams& params);
+    void getShareLink();
     void lockFile(const QString& repo_id,
                   const QString& path_in_repo,
                   bool lock);
