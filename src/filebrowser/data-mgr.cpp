@@ -396,9 +396,9 @@ FileUploadTask* DataManager::createUploadTask(const QString& repo_id,
     if (QFileInfo(local_path).isFile())
         task = new FileUploadTask(account_, repo_id, parent_dir,
                                   local_path, name, !overwrite);
-    else
-        task = new FileUploadDirectoryTask(account_, repo_id, parent_dir,
-                                           local_path, name);
+    // else
+    //     task = new FileUploadDirectoryTask(account_, repo_id, parent_dir,
+    //                                        local_path, name);
     connect(task, SIGNAL(finished(bool)),
             this, SLOT(onFileUploadFinished(bool)));
     setupTaskCleanup(task);
@@ -418,14 +418,15 @@ FileUploadTask* DataManager::createUploadMultipleTask(const QString& repo_id,
                                                       const QStringList& names,
                                                       const bool overwrite)
 {
-    FileUploadTask *task = new FileUploadMultipleTask(account_, repo_id, parent_dir,
-                                                      local_path, names, !overwrite);
+    // FileUploadTask *task = new FileUploadMultipleTask(account_, repo_id, parent_dir,
+    //                                                   local_path, names, !overwrite);
 
-    connect(task, SIGNAL(finished(bool)),
-            this, SLOT(onFileUploadFinished(bool)));
-    setupTaskCleanup(task);
+    // connect(task, SIGNAL(finished(bool)),
+    //         this, SLOT(onFileUploadFinished(bool)));
+    // setupTaskCleanup(task);
 
-    return task;
+    // return task;
+    return NULL;
 }
 
 void DataManager::onFileUploadFinished(bool success)

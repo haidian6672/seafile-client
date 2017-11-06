@@ -211,48 +211,48 @@ private:
     const bool use_upload_;
 };
 
-class FileUploadMultipleTask : public FileUploadTask {
-    Q_OBJECT
-public:
-    FileUploadMultipleTask(const Account& account,
-                           const QString& repo_id,
-                           const QString& path,
-                           const QString& local_dir_path,
-                           const QStringList& names,
-                           bool use_upload);
+// class FileUploadMultipleTask : public FileUploadTask {
+//     Q_OBJECT
+// public:
+//     FileUploadMultipleTask(const Account& account,
+//                            const QString& repo_id,
+//                            const QString& path,
+//                            const QString& local_dir_path,
+//                            const QStringList& names,
+//                            bool use_upload);
+// 
+//     const QStringList& names() const { return names_; }
+// 
+// protected:
+//     void createFileServerTask(const QString& link);
+// 
+//     const QStringList names_;
+// };
 
-    const QStringList& names() const { return names_; }
-
-protected:
-    void createFileServerTask(const QString& link);
-
-    const QStringList names_;
-};
-
-class FileUploadDirectoryTask : public FileUploadTask {
-    Q_OBJECT
-public:
-    FileUploadDirectoryTask(const Account& account,
-                            const QString& repo_id,
-                            const QString& path,
-                            const QString& local_path,
-                            const QString& name);
-
-protected:
-    void createFileServerTask(const QString& link);
-
-protected slots:
-    // overwrited
-    virtual void onFinished(bool success);
-
-private slots:
-    void nextEmptyFolder();
-    void onCreateDirFailed(const ApiError& error);
-
-private:
-    QStringList empty_subfolders_;
-    QScopedPointer<CreateDirectoryRequest, QScopedPointerDeleteLater> create_dir_req_;
-};
+// class FileUploadDirectoryTask : public FileUploadTask {
+//     Q_OBJECT
+// public:
+//     FileUploadDirectoryTask(const Account& account,
+//                             const QString& repo_id,
+//                             const QString& path,
+//                             const QString& local_path,
+//                             const QString& name);
+// 
+// protected:
+//     void createFileServerTask(const QString& link);
+// 
+// protected slots:
+//     // overwrited
+//     virtual void onFinished(bool success);
+// 
+// private slots:
+//     void nextEmptyFolder();
+//     void onCreateDirFailed(const ApiError& error);
+// 
+// private:
+//     QStringList empty_subfolders_;
+//     QScopedPointer<CreateDirectoryRequest, QScopedPointerDeleteLater> create_dir_req_;
+// };
 
 /**
  * Handles raw file download/upload with seafile file server.
@@ -358,48 +358,48 @@ private:
     QTemporaryFile *tmp_file_;
 };
 
-class PostFilesTask : public FileServerTask {
-    Q_OBJECT
-public:
-    PostFilesTask(const QUrl& url,
-                  const QString& parent_dir,
-                  const QString& local_path,
-                  const QStringList& names,
-                  const bool use_relative);
-    ~PostFilesTask();
-    int currentNum();
-
-protected:
-    void prepare();
-    void sendRequest();
-    void startNext();
-
-private slots:
-    void cancel();
-    void onProgressUpdate();
-    void onPostTaskProgressUpdate(qint64, qint64);
-    void onPostTaskFinished(bool success);
-
-private:
-    // never used
-    void onHttpRequestFinished() {}
-
-    const QString parent_dir_;
-    const QString name_;
-    QList<qint64> file_sizes_;
-    const QStringList names_;
-
-    QScopedPointer<ReliablePostFileTask, doDeleteLater<ReliablePostFileTask> > task_;
-    int current_num_;
-    // transferred bytes in the current tasks
-    qint64 current_bytes_;
-    // the total bytes of completely transferred tasks
-    qint64 transferred_bytes_;
-    // the total bytes of all tasks
-    qint64 total_bytes_;
-    // deal with the qt4 eventloop's bug
-    QTimer *progress_update_timer_;
-    const bool use_relative_;
-};
+// class PostFilesTask : public FileServerTask {
+//     Q_OBJECT
+// public:
+//     PostFilesTask(const QUrl& url,
+//                   const QString& parent_dir,
+//                   const QString& local_path,
+//                   const QStringList& names,
+//                   const bool use_relative);
+//     ~PostFilesTask();
+//     int currentNum();
+// 
+// protected:
+//     void prepare();
+//     void sendRequest();
+//     void startNext();
+// 
+// private slots:
+//     void cancel();
+//     void onProgressUpdate();
+//     void onPostTaskProgressUpdate(qint64, qint64);
+//     void onPostTaskFinished(bool success);
+// 
+// private:
+//     // never used
+//     void onHttpRequestFinished() {}
+// 
+//     const QString parent_dir_;
+//     const QString name_;
+//     QList<qint64> file_sizes_;
+//     const QStringList names_;
+// 
+//     QScopedPointer<ReliablePostFileTask, doDeleteLater<ReliablePostFileTask> > task_;
+//     int current_num_;
+//     // transferred bytes in the current tasks
+//     qint64 current_bytes_;
+//     // the total bytes of completely transferred tasks
+//     qint64 transferred_bytes_;
+//     // the total bytes of all tasks
+//     qint64 total_bytes_;
+//     // deal with the qt4 eventloop's bug
+//     QTimer *progress_update_timer_;
+//     const bool use_relative_;
+// };
 
 #endif // SEAFILE_CLIETN_FILEBROWSER_TAKS_H

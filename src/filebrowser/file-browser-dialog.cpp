@@ -818,7 +818,7 @@ void FileBrowserDialog::onUploadFinished(bool success)
         }
 
         // always force a refresh for uploading directory
-        if (qobject_cast<FileUploadDirectoryTask*>(sender()))
+        // if (qobject_cast<FileUploadDirectoryTask*>(sender()))
             forceRefresh();
 
         if (task->error() == FileNetworkTask::TaskCanceled)
@@ -833,7 +833,8 @@ void FileBrowserDialog::onUploadFinished(bool success)
     QStringList names;
 
     // Upload Directory Task
-    if (qobject_cast<FileUploadDirectoryTask *>(sender())) {
+    // if (qobject_cast<FileUploadDirectoryTask *>(sender())) {
+    {
         const SeafDirent dir = SeafDirent::dir(task->name());
         // TODO: insert the Item prior to the item where uploading occurs
         table_model_->insertItem(0, dir);
@@ -841,16 +842,16 @@ void FileBrowserDialog::onUploadFinished(bool success)
         return;
     }
 
-    // Upload Multiple Task
-    FileUploadMultipleTask *multi_task = qobject_cast<FileUploadMultipleTask *>(sender());
+    // // Upload Multiple Task
+    // FileUploadMultipleTask *multi_task = qobject_cast<FileUploadMultipleTask *>(sender());
 
-    if (multi_task == NULL) {
-      names.push_back(task->name());
-      local_path = QFileInfo(local_path).absolutePath();
-    } else {
-      names = multi_task->names();
-      local_path = QFileInfo(local_path).absoluteFilePath();
-    }
+    // if (multi_task == NULL) {
+    //   names.push_back(task->name());
+    //   local_path = QFileInfo(local_path).absolutePath();
+    // } else {
+    //   names = multi_task->names();
+    //   local_path = QFileInfo(local_path).absoluteFilePath();
+    // }
 
     // require a forceRefresh if conflicting filename found
     Q_FOREACH(const QString &name, names)
